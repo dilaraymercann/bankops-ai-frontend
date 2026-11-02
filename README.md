@@ -20,7 +20,7 @@ npm install
 npm run dev
 ```
 
-Uygulama http://localhost:5173 adresinde açılır.
+Uygulama http://localhost:5173 adresinde açılır. Backend'in de çalışıyor olması gerekir (varsayılan adres `http://localhost:8080`; değiştirmek için `.env.example` dosyasını `.env` olarak kopyalayıp `VITE_API_BASE_URL` ayarlanır). Giriş yapmak için demo kullanıcı adları ve parola backend README'sinde anlatılır.
 
 ## Komutlar
 

@@ -1,39 +1,44 @@
-import { Button } from '@/components/ui/button'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
+import { useAuth } from '@/auth/AuthContext'
+import { LoginPage } from '@/auth/LoginPage'
+import { RequireAuth } from '@/auth/RequireAuth'
+import { homePathFor } from '@/auth/navigation'
+import { AppLayout } from '@/components/AppLayout'
+import { CaseDetailPage } from '@/features/exception-detail/CaseDetailPage'
+import { ComingSoonPage } from '@/features/placeholder/ComingSoonPage'
+import { QueuePage } from '@/features/queue/QueuePage'
 
-// Faz 0 yer tutucu ekranı: Tailwind, tema renkleri, yazı tipleri ve shadcn/ui kurulumunu doğrular.
-// Gerçek layout (sol menü, ekranlar) Faz 2'de eklenecek.
+/** Bilinmeyen adresler: girişliyse kendi ana sayfasına, değilse login'e. */
+function HomeRedirect() {
+  const { user } = useAuth()
+  return <Navigate to={user ? homePathFor(user.role) : '/login'} replace />
+}
+
 function App() {
   return (
-    <div className="flex min-h-svh">
-      <aside className="hidden w-60 bg-sidebar p-5 text-sidebar-foreground md:block">
-        <p className="text-lg font-semibold">BankOps AI</p>
-        <p className="text-sm opacity-70">Ödeme Operasyonları</p>
-      </aside>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
 
-      <main className="flex-1 p-8">
-        <div className="flex items-start justify-between gap-4">
-          <h1 className="text-2xl font-semibold">BankOps AI</h1>
-          <span className="rounded-md border bg-card px-3 py-1 text-xs text-muted-foreground">
-            Sentetik demo verisi
-          </span>
-        </div>
+        <Route element={<RequireAuth />}>
+          <Route element={<AppLayout />}>
+            <Route element={<RequireAuth roles={['Specialist', 'TeamLead']} />}>
+              <Route path="/queue" element={<QueuePage />} />
+              <Route path="/cases/:id" element={<CaseDetailPage />} />
+              <Route path="/knowledge-base" element={<ComingSoonPage title="Bilgi Tabanı" phase="Faz 4" />} />
+            </Route>
+            <Route element={<RequireAuth roles={['TeamLead']} />}>
+              <Route path="/approvals" element={<ComingSoonPage title="Onay Bekleyen Çözümler" phase="Faz 3" />} />
+            </Route>
+            <Route element={<RequireAuth roles={['TeamLead', 'Manager']} />}>
+              <Route path="/dashboard" element={<ComingSoonPage title="Operasyon Dashboard" phase="Faz 5" />} />
+            </Route>
+          </Route>
+        </Route>
 
-        <div className="mt-6 max-w-xl rounded-lg border bg-card p-6">
-          <p>Proje iskeleti hazır. Ekranlar sonraki fazlarda eklenecek.</p>
-          <p className="mt-2 font-mono text-sm text-muted-foreground">EXC-2026-10482 · 48.750,00 TL</p>
-
-          <div className="mt-4 flex flex-wrap gap-2">
-            <span className="rounded px-2 py-0.5 text-xs font-medium bg-critical-bg text-critical">Kritik</span>
-            <span className="rounded px-2 py-0.5 text-xs font-medium bg-warning-bg text-warning">Yüksek</span>
-            <span className="rounded px-2 py-0.5 text-xs font-medium bg-info-bg text-info">Orta</span>
-            <span className="rounded px-2 py-0.5 text-xs font-medium bg-neutral-bg text-neutral">Düşük</span>
-            <span className="rounded px-2 py-0.5 text-xs font-medium bg-success-bg text-success">Onaylı</span>
-          </div>
-
-          <Button className="mt-6">Filtrele</Button>
-        </div>
-      </main>
-    </div>
+        <Route path="*" element={<HomeRedirect />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
