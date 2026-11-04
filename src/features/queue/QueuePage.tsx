@@ -156,7 +156,7 @@ function SummaryCard({ label, value, tone, hint }: { label: string; value?: numb
   return (
     <div className="rounded-lg border bg-card p-4">
       <p className={cn('text-xs font-medium', tone ?? 'text-muted-foreground')}>{label}</p>
-      <p className="mt-1 text-2xl font-semibold">{value ?? <Skeleton className="mt-2 h-6 w-10" />}</p>
+      <div className="mt-1 text-2xl font-semibold">{value ?? <Skeleton className="mt-2 h-6 w-10" />}</div>
       {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
     </div>
   )

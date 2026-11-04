@@ -4,6 +4,7 @@ import { LoginPage } from '@/auth/LoginPage'
 import { RequireAuth } from '@/auth/RequireAuth'
 import { homePathFor } from '@/auth/navigation'
 import { AppLayout } from '@/components/AppLayout'
+import { ApprovalsPage } from '@/features/approvals/ApprovalsPage'
 import { CaseDetailPage } from '@/features/exception-detail/CaseDetailPage'
 import { ComingSoonPage } from '@/features/placeholder/ComingSoonPage'
 import { QueuePage } from '@/features/queue/QueuePage'
@@ -28,7 +29,7 @@ function App() {
               <Route path="/knowledge-base" element={<ComingSoonPage title="Bilgi Tabanı" phase="Faz 4" />} />
             </Route>
             <Route element={<RequireAuth roles={['TeamLead']} />}>
-              <Route path="/approvals" element={<ComingSoonPage title="Onay Bekleyen Çözümler" phase="Faz 3" />} />
+              <Route path="/approvals" element={<ApprovalsPage />} />
             </Route>
             <Route element={<RequireAuth roles={['TeamLead', 'Manager']} />}>
               <Route path="/dashboard" element={<ComingSoonPage title="Operasyon Dashboard" phase="Faz 5" />} />

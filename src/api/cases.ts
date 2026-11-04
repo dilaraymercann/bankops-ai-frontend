@@ -1,6 +1,6 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from './client'
-import type { CaseDetail, CaseFilters, CaseListItem, CaseSummary, PageResponse } from './types'
+import type { CaseDetail, CaseFilters, CaseListItem, CaseStatus, CaseSummary, PageResponse, UserSummary } from './types'
 
 function toQuery(filters: CaseFilters): string {
   const params = new URLSearchParams()
@@ -35,5 +35,36 @@ export function useCase(id: string | undefined) {
     queryKey: ['cases', 'detail', id],
     queryFn: () => apiFetch<CaseDetail>(`/api/cases/${id}`),
     enabled: !!id,
+  })
+}
+
+/**
+ * Kayıt üzerinde yazma işlemi yapar. Backend güncel kayıt detayını döner; önbellekteki detay hemen güncellenir,
+ * liste, özet ve onay listesi yeniden çekilir.
+ */
+function useCaseAction<TBody>(action: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ caseId, body }: { caseId: number; body: TBody }) =>
+      apiFetch<CaseDetail>(`/api/cases/${caseId}/${action}`, { method: 'POST', body: JSON.stringify(body) }),
+    onSuccess: (detail) => {
+      queryClient.setQueryData(['cases', 'detail', String(detail.id)], detail)
+      void queryClient.invalidateQueries({ queryKey: ['cases'] })
+      void queryClient.invalidateQueries({ queryKey: ['approvals'] })
+    },
+  })
+}
+
+export const useAddNote = () => useCaseAction<{ text: string }>('notes')
+export const useTransition = () => useCaseAction<{ toStatus: CaseStatus; reason?: string }>('transitions')
+export const useProposeResolution = () => useCaseAction<{ text: string }>('resolution')
+export const useAssign = () => useCaseAction<{ userId: number }>('assign')
+
+/** Atama listesi: yalnızca atama yetkisi olan kullanıcı için çekilir. */
+export function useSpecialists(enabled: boolean) {
+  return useQuery({
+    queryKey: ['users', 'Specialist'],
+    queryFn: () => apiFetch<UserSummary[]>('/api/users?role=Specialist'),
+    enabled,
   })
 }

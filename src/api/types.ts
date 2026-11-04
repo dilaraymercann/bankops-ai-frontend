@@ -24,6 +24,8 @@ export type ErrorCode = (typeof ERROR_CODES)[number]
 export const SLA_STATES = ['Breached', 'Approaching', 'Normal'] as const
 export type SlaState = (typeof SLA_STATES)[number]
 
+export type AiFeedback = 'Useful' | 'NotUseful'
+
 export type Channel = 'InternetBranch' | 'Mobile' | 'Branch' | 'CorporateApi'
 
 export interface UserSummary {
@@ -130,6 +132,60 @@ export interface CaseDetail {
   transaction: TransactionView
   notes: NoteView[]
   history: HistoryEntry[]
+  /** Durum listesinde seçilebilecek hedefler (backend'in kuralları; arayüz kendi başına karar vermez). */
+  allowedTransitions: CaseStatus[]
+  canProposeResolution: boolean
+  canAssign: boolean
+  /** Yalnızca "Çözüm Önerildi" durumundaki kayıtlarda dolu. */
+  pendingResolution: PendingResolution | null
+}
+
+export interface PendingResolution {
+  text: string
+  proposedByName: string | null
+  proposedAt: string
+}
+
+export interface ApprovalItem {
+  caseId: number
+  caseNumber: string
+  errorCode: ErrorCode
+  errorDescription: string
+  transactionType: TransactionType
+  amount: string
+  currency: string
+  proposedByName: string | null
+  proposedAt: string
+  slaBreached: boolean
+}
+
+export interface FourEyesCheck {
+  passed: boolean
+  message: string
+}
+
+export interface AuditLine {
+  at: string
+  username: string
+  action: string
+  /** Ham JSON metni (örn. {"from":"InReview","to":"SolutionProposed"}). */
+  details: string | null
+}
+
+export interface ApprovalReview {
+  caseId: number
+  caseNumber: string
+  errorCode: ErrorCode
+  priority: Priority
+  resolutionText: string
+  proposedByName: string | null
+  proposedAt: string
+  fourEyes: FourEyesCheck
+  aiAnalysisUsed: boolean
+  aiFeedback: AiFeedback | null
+  /** Kayıt açılışından çözüm önerisine kadar geçen çalışma süresi (dakika). */
+  resolutionMinutes: number
+  recentAudit: AuditLine[]
 }
 
 export interface CaseFilters {

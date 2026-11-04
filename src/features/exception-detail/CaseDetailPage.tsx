@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { formatDate, formatDateTime, formatDuration, formatMoney } from '@/lib/format'
 import { CHANNEL_LABELS, STATUS_LABELS, TRANSACTION_TYPE_LABELS } from '@/lib/labels'
 import { cn } from '@/lib/utils'
+import { ActionCard } from './ActionCard'
 
 export function CaseDetailPage() {
   const { id } = useParams()
@@ -84,6 +85,18 @@ function DetailContent({ detail }: { detail: CaseDetail }) {
             </ul>
           </Card>
         )}
+
+        {detail.pendingResolution && (
+          <Card title="Önerilen Çözüm">
+            <p>{detail.pendingResolution.text}</p>
+            <p className="mt-3 text-xs text-muted-foreground">
+              {detail.pendingResolution.proposedByName ?? 'Uzman'} · {formatDateTime(detail.pendingResolution.proposedAt)} · Takım liderinin onayını bekliyor
+            </p>
+          </Card>
+        )}
+
+        <ActionCard detail={detail} />
+
       </div>
     </>
   )
