@@ -197,3 +197,59 @@ export interface CaseFilters {
   page?: number
   pageSize?: number
 }
+
+export interface AiPossibleCause {
+  cause: string
+  supportingCaseIds: string[]
+}
+
+export interface AiAnalysisResult {
+  summary: string
+  possibleCauses: AiPossibleCause[]
+  recommendedSteps: string[]
+  warnings: string[]
+  referencedCaseIds: string[]
+}
+
+/** Analizin dayandığı geçmiş kayıt. Seed'den gelen eski analizlerde benzerlik skoru yoktur. */
+export interface AiReference {
+  caseNumber: string
+  errorCode: ErrorCode
+  similarity: number | null
+  matchReason: string | null
+  resolutionText: string
+}
+
+/** available=false: güvenilir geçmiş kayıt yok, model çağrılmadı; message boş durum olarak gösterilir. */
+export interface AiAnalysis {
+  id: number | null
+  available: boolean
+  message: string | null
+  result: AiAnalysisResult | null
+  references: AiReference[]
+  similarRecordCount: number
+  maskedFieldCount: number
+  modelName: string | null
+  createdAt: string
+  feedback: AiFeedback | null
+  cached: boolean
+}
+
+export interface KnowledgeBaseItem {
+  caseId: number
+  caseNumber: string
+  errorCode: ErrorCode
+  transactionType: TransactionType
+  text: string
+  proposedByName: string
+  approvedByName: string
+  approvedAt: string
+  aiReferenceCount: number
+}
+
+export interface KnowledgeBaseFilters {
+  search?: string
+  errorCode?: ErrorCode
+  page?: number
+  pageSize?: number
+}

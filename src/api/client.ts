@@ -41,5 +41,7 @@ export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise
     const problem = (await response.json().catch(() => null)) as { detail?: string } | null
     throw new ApiError(response.status, problem?.detail ?? 'Beklenmeyen bir hata oluştu.')
   }
+  // 204 No Content (örn. henüz AI analizi yok): gövde yoktur
+  if (response.status === 204) return null as T
   return (await response.json()) as T
 }

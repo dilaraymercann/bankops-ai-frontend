@@ -6,6 +6,7 @@ import { homePathFor } from '@/auth/navigation'
 import { AppLayout } from '@/components/AppLayout'
 import { ApprovalsPage } from '@/features/approvals/ApprovalsPage'
 import { CaseDetailPage } from '@/features/exception-detail/CaseDetailPage'
+import { KnowledgeBasePage } from '@/features/knowledge-base/KnowledgeBasePage'
 import { ComingSoonPage } from '@/features/placeholder/ComingSoonPage'
 import { QueuePage } from '@/features/queue/QueuePage'
 
@@ -26,7 +27,7 @@ function App() {
             <Route element={<RequireAuth roles={['Specialist', 'TeamLead']} />}>
               <Route path="/queue" element={<QueuePage />} />
               <Route path="/cases/:id" element={<CaseDetailPage />} />
-              <Route path="/knowledge-base" element={<ComingSoonPage title="Bilgi Tabanı" phase="Faz 4" />} />
+              <Route path="/knowledge-base" element={<KnowledgeBasePage />} />
             </Route>
             <Route element={<RequireAuth roles={['TeamLead']} />}>
               <Route path="/approvals" element={<ApprovalsPage />} />

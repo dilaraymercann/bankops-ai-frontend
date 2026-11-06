@@ -9,6 +9,7 @@ import { formatDate, formatDateTime, formatDuration, formatMoney } from '@/lib/f
 import { CHANNEL_LABELS, STATUS_LABELS, TRANSACTION_TYPE_LABELS } from '@/lib/labels'
 import { cn } from '@/lib/utils'
 import { ActionCard } from './ActionCard'
+import { AiAnalysisPanel } from './AiAnalysisPanel'
 
 export function CaseDetailPage() {
   const { id } = useParams()
@@ -43,7 +44,9 @@ function DetailContent({ detail }: { detail: CaseDetail }) {
         <SlaBanner detail={detail} />
       </div>
 
-      <div className="grid max-w-4xl gap-6">
+      {/* Geniş ekranda solda kayıt bilgileri ve aksiyonlar, sağda AI paneli; dar ekranda alt alta */}
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,28rem)] xl:items-start">
+        <div className="grid min-w-0 gap-6">
         <Card title="İşlem Bilgileri">
           <dl className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
             <Field label="Gönderen" value={transaction.senderName} />
@@ -96,7 +99,9 @@ function DetailContent({ detail }: { detail: CaseDetail }) {
         )}
 
         <ActionCard detail={detail} />
+        </div>
 
+        <AiAnalysisPanel caseId={detail.id} />
       </div>
     </>
   )
